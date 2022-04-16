@@ -2,32 +2,22 @@ import React from 'react';
 import AddToDo from './AddToDo';
 import Header from './layout/Header';
 import ToDos from './ToDos';
+import axios from 'axios'
 
+interface TodoItem {
+    id: number,
+    title: string,
+    completed: boolean
+}
 class ToDoApp extends React.Component {
     state = {
-        todos: [
-            {
-                id: 1,
-                title: 'Set up development enviroment',
-                completed: false
-            },
-            {
-                id: 2,
-                title: 'Develop website and add content',
-                completed: false
-            },
-            {
-                id: 3,
-                title: 'Deploy to live server',
-                completed: false
-            },
-        ]
+        todos: []
     }
 
     handleCheckboxChange = (id: number) => {
         console.log('this id is: ', id);
         this.setState({
-            todos: this.state.todos.map(todo => {
+            todos: this.state.todos.map((todo: TodoItem) => {
                 if(todo.id === id ) {
                     todo.completed = !todo.completed
                 }
@@ -37,23 +27,42 @@ class ToDoApp extends React.Component {
     }
 
     deleteTodoItem = (id: number) => {
-        console.log('delete id:', id)
-        this.setState({
-            todos: this.state.todos.filter(todo => todo.id !== id)
-        })
+        console.log('delete id:', id);
+        axios.delete(`https://jsonplaceholder.typicode.com/todos/${id}`)
+        .then(response => this.setState({
+                todos: this.state.todos.filter((todo: TodoItem) => todo.id !== id)
+            })
+        );
+        // this.setState({
+        //         todos: this.state.todos.filter((todo: TodoItem) => todo.id !== id)
+        // })
     }
 
     addTodoItem = (title: string) => {
-        console.log('added todo');
+        console.log('added todo:', title);
         const countToDo = this.state.todos.length;
         const newTodo = {
             id: countToDo + 1,
             title,
             completed: false,
         };
-        this.setState({
-            todos: [...this.state.todos, newTodo]
+        axios.post('https://jsonplaceholder.typicode.com/todos', newTodo)
+        .then(response => {
+             console.log(response.data);
+             this.setState({
+                todos: [...this.state.todos, response.data]
+            });
         });
+    }
+
+    componentDidMount() {
+        const config = {
+            params: {
+                _limit: 5
+            }
+        }
+        axios.get('https://jsonplaceholder.typicode.com/todos', config)
+        .then(response => this.setState({todos: response.data}))
     }
     render() {
         return (
