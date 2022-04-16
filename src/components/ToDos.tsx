@@ -10,6 +10,8 @@ interface ToDoItem {
 
 interface IProps {
     todos: ToDoItem[];
+    handleChange(id: number): void
+    deleteTodo(id: number): void
 }
 
 class ToDos extends React.Component<IProps> {
@@ -18,7 +20,12 @@ class ToDos extends React.Component<IProps> {
             <div>
                 <ul>
                     {this.props.todos.map((todo: ToDoItem) =>(
-                        <ToDoItems key={todo.id} todo={todo}/>
+                        <ToDoItems
+                            key={todo.id}
+                            todo={todo}
+                            handleChange={this.props.handleChange}
+                            deleteTodo={this.props.deleteTodo}
+                        />
                     ))}
                 </ul>
             </div>

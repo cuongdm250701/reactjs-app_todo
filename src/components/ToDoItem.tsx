@@ -4,15 +4,18 @@ class ToDoItems extends React.Component<any> {
     
     
     render() {
-        // console.log('{this.props.key}', this.props.todo.id);
+        const {id, title, completed} = this.props.todo
         return (
-            <li className = 'todo-item' key={this.props.todo.id}>
+            <li className = 'todo-item' id={id}>
                 <input 
                 type ='checkbox'
-                checked={this.props.todo.completed}
-                onChange={() => console.log("clicked")}
+                checked={completed}
+                onChange={() => this.props.handleChange(id)}
                 />
-                {this.props.todo.title}
+                <span className={completed ? 'completed' : ''}>
+                    {title}
+                </span>
+                <button className='btn-style' onClick={() => this.props.deleteTodo(id)}>X</button>
             </li>
         )
     }
